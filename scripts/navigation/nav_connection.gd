@@ -1,4 +1,4 @@
-class_name Connection extends Resource
+class_name NavConnection extends Resource
 
 @export var a: NodePath
 @export var b: NodePath

@@ -1,38 +1,27 @@
-@tool
-class_name Destination extends Area2D
+# Note: Replace UID when copying from template
+@icon("uid://ddjw4kyq1rqmn")
+class_name NavDestination extends Area2D
 
-### Variables
-@onready var collision: CollisionShape2D = $Collision
-@onready var triggers = $Triggers
+#region Variables
+@export var selectable: bool = true: set = _set_selectable
+@export var collision: CollisionShape2D
+@export var triggers: Triggers
 
-@export var selectable: bool = true:
-	set(v):
-		selectable = v
-		_set_debug_color()
+signal selected(dest)
 
-### Signals
-signal selected
-
-### Public Functions
 func reach():
-	for trigger in triggers.get_children():
-		assert(trigger is Trigger, "Non-Trigger child found under destination triggers")
-		print("Trigger: %s" % trigger.name)
-		await trigger.execute()
+	triggers.execute()
 
-### Engine Functions
-func _ready():
-	self.input_event.connect(_on_input_event)
+func _input_event(_viewport: Viewport, event: InputEvent, _shape_idx: int) -> void:
+	if (event is InputEventMouseButton
+	and event.button_index in [MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT]
+	and event.is_released()
+	and selectable):
+		selected.emit(self)
 
-### Private Functions
-func _on_input_event(_v: Node, event: InputEvent, _i: int):
-	if selectable and event is InputEventMouseButton and event.button_index in [MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT] and event.is_released():
-		selected.emit()
-
-func _set_debug_color():
-	if not collision:
-		return
-	if selectable:
-		collision.debug_color = Color.hex(0x0099b36b)
-	else:
-		collision.debug_color = Color.hex(0xb300006b)
+func _set_selectable(value: bool):
+	selectable = value
+	# setters can get called before the object has entered the tree, therefore its
+	# child objects haven't been initialized yet and we need this check
+	if is_inside_tree():
+		collision.disabled = not value

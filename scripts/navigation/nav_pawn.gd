@@ -1,20 +1,38 @@
+# Note: Replace UID when copying from template
+@icon("uid://caotv31fjq3l3")
 class_name NavPawn extends Node2D
 
-### Variables
-@onready var path: Path2D = $Path
-@onready var follow: PathFollow2D = $Path/Follow
-
+#region Variables
 @export_range(0.5, 4.0) var move_speed : float = 1.0
 
+var path: Path2D
+var follow: PathFollow2D
 var moving : bool
 var direction: Vector2
-var destination: Destination
+var destination: NavDestination
+#endregion
 
-### Signals
+#region Signals
 signal reached_destination
+#endregion
 
-### Public Functions
-func initiate_move(p: Array[Destination]):
+#region Engine Functions
+func _ready():
+	_instantiate_path()
+	_reset()
+
+func _process(delta):
+	if moving:
+		if follow.progress_ratio >= 1.0 or self.position == destination.position:
+			_reach_destination()
+		else:
+			follow.progress += move_speed * 250 * delta
+			position = follow.position
+			direction = _determine_direction()
+#endregion
+
+#region Public Functions
+func initiate_move(p: Array[NavDestination]):
 	# If we have no path it means the destination is unreachable.
 	# Do nothing.
 	if not p:
@@ -31,22 +49,17 @@ func initiate_move(p: Array[Destination]):
 	follow.progress = 0
 	destination = p.back()
 	moving = true
+#endregion
 
-### Engine Functions
-func _ready():
-	assert(not follow.loop, "pawn follow node must not loop")
-	_reset()
+#region Private Functions
+func _instantiate_path():
+	self.path = Path2D.new()
+	self.path.curve = Curve2D.new()
+	add_child(self.path)
+	self.follow = PathFollow2D.new()
+	self.follow.loop = false
+	self.path.add_child(self.follow)
 
-func _process(delta):
-	if moving:
-		if follow.progress_ratio >= 1.0 or self.position == destination.position:
-			_reach_destination()
-		else:
-			follow.progress += move_speed * 250 * delta
-			position = follow.position
-			direction = _determine_direction()
-
-## Private Functions
 func _reset():
 	path.curve.clear_points()
 	follow.progress = 0
@@ -64,3 +77,4 @@ func _determine_direction() -> Vector2:
 func _reach_destination():
 	reached_destination.emit(self.destination)
 	_reset()
+#endregion

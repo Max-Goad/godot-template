@@ -1,26 +1,44 @@
+# Note: Replace UID when copying from template
+@icon("uid://bebqib84wg1hi")
 @tool
 class_name NavMap extends Node2D
 
-### Variables
-@export var pawn: NavPawn
-@export var connections: Array[Connection]
+enum DisplayMode { Always, EditorOnly, Never }
 
-var nodes: Array[Destination]
-var node_to_index: Dictionary
+@export var connections: Array[NavConnection] : set = _set_connections
+var destinations: Array[NavDestination]
+var dest_to_index: Dictionary[Node, int]
 var astar: AStar2D
 
-### Signals
+@export_group("Display")
+@export var draw_connections := DisplayMode.EditorOnly : set = _set_draw_connections
+@export var connection_color := Color.WHITE : set = _set_connection_color
+@export var connection_disabled_color := Color.LIGHT_CORAL : set = _set_connection_disabled_color
+@export var connection_width := 5.0 : set = _set_connection_width
 
-### Public Functions_path
+func _ready() -> void:
+	if Engine.is_editor_hint():
+		return
+	destinations = _populate_destinations_from_connections()
+	astar = _generate_astar()
+
+func _draw() -> void:
+	match draw_connections:
+		DisplayMode.Always:
+			_draw_connections()
+		DisplayMode.EditorOnly:
+			if Engine.is_editor_hint():
+				_draw_connections()
+
 # Note: Returns [] if we're already at the destination
 #		Returns null if there's no path to the destination
-func generate_path(from: Vector2, to: Destination) -> Array[Destination]:
+func generate_path(from: Vector2, to: NavDestination) -> Array[NavDestination]:
 	var dest = _point_is_on_destination(from)
 	if dest:
 		if dest == to:
 			return [dest]
 		else:
-			var indexes = astar.get_id_path(node_to_index[dest], node_to_index[to])
+			var indexes = astar.get_id_path(dest_to_index[dest], dest_to_index[to])
 			return _indexes_to_destinations(indexes)
 
 	var conn = _point_is_on_connection(from)
@@ -29,52 +47,59 @@ func generate_path(from: Vector2, to: Destination) -> Array[Destination]:
 			var indexes = _shortest_path([get_node(conn.a), get_node(conn.b)], to)
 			return _indexes_to_destinations(indexes)
 		else:
-			var indexes = astar.get_id_path(node_to_index[get_node(conn.b)], node_to_index[to])
+			var indexes = astar.get_id_path(dest_to_index[get_node(conn.b)], dest_to_index[to])
 			return _indexes_to_destinations(indexes)
+	# We're off the navigation tree, so build a path starting from the closest node
+	else:
+		var indexes = astar.get_id_path(dest_to_index[closest_to(from)], dest_to_index[to])
+		return _indexes_to_destinations(indexes)
 
-	# Last resort:
-	#	We're off the navigation tree, so build a path starting from the closest node.
-	var indexes = astar.get_id_path(node_to_index[closest_to(from)], node_to_index[to])
-	return _indexes_to_destinations(indexes)
+func closest_to(pos: Vector2) -> NavDestination:
+	return destinations[astar.get_closest_point(pos)]
 
-func closest_to(pos: Vector2) -> Destination:
-	return nodes[astar.get_closest_point(pos)]
+func random() -> NavDestination:
+	return destinations.pick_random()
 
-func random() -> Destination:
-	return nodes.pick_random()
+func get_index_from_dest(dest: NavDestination) -> int:
+	return dest_to_index[dest]
 
-### Engine Functions
-func _ready() -> void:
-	for child in get_children():
-		assert(child is Destination, "invalid navigation child")
-		nodes.push_back(child)
-	astar = _generate_astar()
+func get_dest_from_index(index: int) -> NavDestination:
+	return destinations[index]
 
-	if Engine.is_editor_hint() or get_tree().debug_collisions_hint:
-		return
+func add_connection(conn: NavConnection):
+	connections.push_back(conn)
 
-	for node in nodes:
-		node.selected.connect(_on_node_selected.bind(node))
-	if pawn:
-		pawn.reached_destination.connect(func(dest): dest.reach())
+func remove_connection_between(a: NavDestination, b: NavDestination):
+	for connection in connections:
+		if a.get_path() == connection.a and b.get_path() == connection.b:
+			connections.erase(connection)
+			return
 
-func _draw() -> void:
-	if Engine.is_editor_hint() or get_tree().debug_collisions_hint:
-		_debug_draw_connections()
+#region Private Functions
+func _populate_destinations_from_connections() -> Array[NavDestination]:
+	var out: Array[NavDestination] = []
+	for connection in connections:
+		var a: NavDestination = get_node(connection.a)
+		var b: NavDestination = get_node(connection.b)
+		if a not in out:
+			out.push_back(a)
+		if b not in out:
+			out.push_back(b)
+	return out
 
-### Private Functions
 func _generate_astar() -> AStar2D:
 	var out := AStar2D.new()
-	for i in nodes.size():
-		var node = nodes[i]
-		out.add_point(i, node.position)
-		node_to_index[node] = i
-		print("Node %s (%d)" % [node.name, i])
-
+	dest_to_index.clear()
+	# Generate Points
+	for i in destinations.size():
+		var dest = destinations[i]
+		out.add_point(i, dest.position)
+		dest_to_index[dest] = i
+	# Generate Segments
 	for connection in connections:
-		var a: Destination = get_node(connection.a)
-		var b: Destination = get_node(connection.b)
-		out.connect_points(node_to_index[a], node_to_index[b], connection.bidirectional)
+		var a: NavDestination = get_node(connection.a)
+		var b: NavDestination = get_node(connection.b)
+		out.connect_points(dest_to_index[a], dest_to_index[b], connection.bidirectional)
 	return out
 
 func _point_is_on_line(point: Vector2, l1: Vector2, l2: Vector2) -> bool:
@@ -93,45 +118,68 @@ func _point_is_on_line(point: Vector2, l1: Vector2, l2: Vector2) -> bool:
 					and point.y >= ymin and point.y <= ymax)
 	return aligned and within_range
 
-func _point_is_on_connection(point: Vector2) -> Connection:
+func _point_is_on_connection(point: Vector2) -> NavConnection:
 	for connection in connections:
-		var a: Destination = get_node(connection.a)
-		var b: Destination = get_node(connection.b)
+		var a: NavDestination = get_node(connection.a)
+		var b: NavDestination = get_node(connection.b)
 		if _point_is_on_line(point, a.position, b.position):
 			return connection
 	return null
 
-func _point_is_on_destination(point: Vector2) -> Destination:
-	for node in nodes:
-		if point == node.position:
-			return node
+func _point_is_on_destination(point: Vector2) -> NavDestination:
+	for dest in destinations:
+		if point == dest.position:
+			return dest
 	return null
 
-func _shortest_path(from_candidates: Array[Destination], to: Destination) -> PackedInt64Array:
+func _shortest_path(from_candidates: Array[NavDestination], to: NavDestination) -> PackedInt64Array:
 	var shortest: PackedInt64Array = []
 	for from in from_candidates:
-		var p = astar.get_id_path(node_to_index[from], node_to_index[to])
+		var p = astar.get_id_path(dest_to_index[from], dest_to_index[to])
 		if not shortest or p.size() < shortest.size():
 			shortest = p
 	return shortest
 
-func _indexes_to_destinations(indexes: PackedInt64Array) -> Array[Destination]:
-	var out: Array[Destination] = []
+func _indexes_to_destinations(indexes: PackedInt64Array) -> Array[NavDestination]:
+	var out: Array[NavDestination] = []
 	for i in indexes:
-		out.push_back(nodes[i])
+		out.push_back(destinations[i])
 	return out
+#endregion
 
-func _on_node_selected(node: Destination):
-	if pawn:
-		pawn.initiate_move(generate_path(pawn.position, node))
+#region Setters
+func _set_connections(value):
+	connections = value
+	queue_redraw()
 
-func _debug_draw_connections():
+func _set_draw_connections(value):
+	draw_connections = value
+	queue_redraw()
+
+func _set_connection_color(value):
+	connection_color = value
+	queue_redraw()
+
+func _set_connection_disabled_color(value):
+	connection_disabled_color = value
+	queue_redraw()
+
+func _set_connection_width(value):
+	connection_width = value
+	queue_redraw()
+#endregion
+
+func _draw_connections():
 	for connection in connections:
-		var a: Vector2 = get_node(connection.a).position
-		var b: Vector2 = get_node(connection.b).position
+		if connection == null or not has_node(connection.a) or not has_node(connection.b):
+			continue
+		var anode = get_node(connection.a)
+		var bnode = get_node(connection.b)
+		var a: Vector2 = anode.position
+		var b: Vector2 = bnode.position
 		if (connection.bidirectional):
-			draw_line(a, b, Color.AQUA, 2.0)
+			draw_line(a, b, connection_color, connection_width)
 		else:
 			var h: Vector2 = (a+b)/2
-			draw_line(a, h, Color.AQUA, 2.0)
-			draw_line(h, b, Color.LIGHT_CORAL, 2.0)
+			draw_line(a, h, connection_color, connection_width)
+			draw_line(h, b, connection_disabled_color, connection_width)

@@ -1,15 +1,17 @@
-[gd_scene load_steps=35 format=3 uid="uid://xemaon1gbp2k"]
+[gd_scene load_steps=37 format=3 uid="uid://xemaon1gbp2k"]
 
 [ext_resource type="Script" uid="uid://7prqlslf7eh3" path="res://scripts/scenes/test_scene.gd" id="1_i0mht"]
 [ext_resource type="PackedScene" uid="uid://csh1iurc1b413" path="res://resources/ui/health_bar.tscn" id="2_g3ou2"]
 [ext_resource type="Script" uid="uid://dtkyery6j0e0c" path="res://scripts/ui/hold_button.gd" id="3_dpdlj"]
-[ext_resource type="Script" uid="uid://cmrui5v5lwprx" path="res://scripts/navigation/nav_map.gd" id="4_1ldar"]
-[ext_resource type="Script" uid="uid://bcx3cuk7obsnv" path="res://scripts/navigation/nav_connection.gd" id="5_rstiy"]
+[ext_resource type="Script" path="res://scripts/navigation/nav_map.gd" id="4_1ldar"]
+[ext_resource type="Script" path="res://scripts/navigation/nav_connection.gd" id="5_rstiy"]
 [ext_resource type="Script" uid="uid://b1muqje3faxmt" path="res://scripts/navigation/nav_destination.gd" id="6_axfb2"]
 [ext_resource type="Script" uid="uid://c85cudw6o5wbo" path="res://scripts/trigger/textbox_trigger.gd" id="7_itm1g"]
-[ext_resource type="Script" uid="uid://1i5h8epl1i1s" path="res://scripts/navigation/nav_pawn.gd" id="8_81qr1"]
-[ext_resource type="Script" uid="uid://bou1ppa6mrns7" path="res://scripts/trigger/change_scene_trigger.gd" id="8_gj1dp"]
+[ext_resource type="Script" path="res://scripts/navigation/nav_pawn.gd" id="8_81qr1"]
+[ext_resource type="Script" path="res://scripts/trigger/triggers.gd" id="8_je848"]
 [ext_resource type="Script" uid="uid://bkprsow3a3mlf" path="res://scripts/misc/_test/test_dest_toggle_button.gd" id="9_qduwm"]
+[ext_resource type="Script" uid="uid://bou1ppa6mrns7" path="res://scripts/trigger/change_scene_trigger.gd" id="10_ftxq5"]
+[ext_resource type="Script" path="res://scripts/navigation/nav_controller.gd" id="11_f7p0w"]
 [ext_resource type="Theme" uid="uid://q5rrux06ucou" path="res://theme/test.theme" id="11_pw38d"]
 [ext_resource type="Script" uid="uid://bydthy3o682u6" path="res://scripts/misc/_test/test_spawn_textbox.gd" id="12_c7u7o"]
 [ext_resource type="Script" uid="uid://1kmr1183njlk" path="res://scripts/misc/_test/test_save_load_button.gd" id="12_k2pe3"]
@@ -17,7 +19,7 @@
 [ext_resource type="Script" uid="uid://d02ri3ryw8poa" path="res://scripts/ui/multibutton_pair.gd" id="14_he6h3"]
 [ext_resource type="Script" uid="uid://bhpk8x6ovggua" path="res://scripts/misc/_test/test_multibutton_label.gd" id="15_tyds6"]
 [ext_resource type="Script" uid="uid://cyys85hikqdpi" path="res://scripts/misc/_test/test_spawn_damage_indicator.gd" id="16_ujy37"]
-[ext_resource type="Script" uid="uid://22vtdegk8hes" path="res://scripts/extensions/visible_collision_shape_2d.gd" id="18_f7p0w"]
+[ext_resource type="Script" path="res://scripts/extensions/visible_collision_shape_2d.gd" id="18_f7p0w"]
 [ext_resource type="Script" uid="uid://th4l6u2tjopq" path="res://scripts/misc/_test/test_visible_collision_shape.gd" id="19_je848"]
 
 [sub_resource type="Resource" id="Resource_a2occ"]
@@ -114,57 +116,85 @@ script = ExtResource("3_dpdlj")
 
 [node name="Navigation" type="Node" parent="."]
 
-[node name="NavMap" type="Node2D" parent="Navigation" node_paths=PackedStringArray("pawn")]
-script = ExtResource("4_1ldar")
+[node name="NavController" type="Node2D" parent="Navigation" node_paths=PackedStringArray("map", "pawn")]
+script = ExtResource("11_f7p0w")
+map = NodePath("../NavMap")
 pawn = NodePath("../NavPawn")
-connections = Array[ExtResource("5_rstiy")]([SubResource("Resource_a2occ"), SubResource("Resource_dk35o"), SubResource("Resource_fytkp"), SubResource("Resource_ffsvi"), SubResource("Resource_bwq7t"), SubResource("Resource_tbbxx")])
+metadata/_custom_type_script = "uid://b7ia4bhq41usw"
 
-[node name="A" type="Area2D" parent="Navigation/NavMap"]
+[node name="NavMap" type="Node2D" parent="Navigation"]
+script = ExtResource("4_1ldar")
+connections = Array[ExtResource("5_rstiy")]([SubResource("Resource_a2occ"), SubResource("Resource_dk35o"), SubResource("Resource_fytkp"), SubResource("Resource_ffsvi"), SubResource("Resource_bwq7t"), SubResource("Resource_tbbxx")])
+draw_connections = 0
+metadata/_custom_type_script = "uid://cmrui5v5lwprx"
+
+[node name="A" type="Area2D" parent="Navigation/NavMap" node_paths=PackedStringArray("collision", "triggers")]
 position = Vector2(62, 98)
 script = ExtResource("6_axfb2")
+collision = NodePath("Collision")
+triggers = NodePath("Triggers")
+metadata/_custom_type_script = "uid://b1muqje3faxmt"
 
 [node name="Collision" type="CollisionShape2D" parent="Navigation/NavMap/A"]
 shape = SubResource("CircleShape2D_xqrps")
 metadata/_edit_lock_ = true
 
 [node name="Triggers" type="Node" parent="Navigation/NavMap/A"]
+script = ExtResource("8_je848")
+metadata/_custom_type_script = "uid://cedp21hrhru6h"
 
 [node name="TextboxTrigger" type="Node" parent="Navigation/NavMap/A/Triggers"]
 script = ExtResource("7_itm1g")
-text = "Destination A"
+text = "Reached A"
+metadata/_custom_type_script = "uid://c85cudw6o5wbo"
 
-[node name="B" type="Area2D" parent="Navigation/NavMap"]
+[node name="B" type="Area2D" parent="Navigation/NavMap" node_paths=PackedStringArray("collision", "triggers")]
 position = Vector2(250, 100)
 script = ExtResource("6_axfb2")
+collision = NodePath("Collision")
+triggers = NodePath("Triggers")
+metadata/_custom_type_script = "uid://b1muqje3faxmt"
 
 [node name="Collision" type="CollisionShape2D" parent="Navigation/NavMap/B"]
 shape = SubResource("CircleShape2D_xqrps")
 metadata/_edit_lock_ = true
 
 [node name="Triggers" type="Node" parent="Navigation/NavMap/B"]
+script = ExtResource("8_je848")
+metadata/_custom_type_script = "uid://cedp21hrhru6h"
 
 [node name="TextboxTrigger" type="Node" parent="Navigation/NavMap/B/Triggers"]
 script = ExtResource("7_itm1g")
-text = "Destination B"
+text = "Reached B"
+metadata/_custom_type_script = "uid://c85cudw6o5wbo"
 
-[node name="C" type="Area2D" parent="Navigation/NavMap"]
+[node name="C" type="Area2D" parent="Navigation/NavMap" node_paths=PackedStringArray("collision", "triggers")]
 position = Vector2(150, 200)
 script = ExtResource("6_axfb2")
+collision = NodePath("Collision")
+triggers = NodePath("Triggers")
+metadata/_custom_type_script = "uid://b1muqje3faxmt"
 
 [node name="Collision" type="CollisionShape2D" parent="Navigation/NavMap/C"]
 shape = SubResource("CircleShape2D_xqrps")
 metadata/_edit_lock_ = true
 
 [node name="Triggers" type="Node" parent="Navigation/NavMap/C"]
+script = ExtResource("8_je848")
+metadata/_custom_type_script = "uid://cedp21hrhru6h"
 
 [node name="TextboxTrigger" type="Node" parent="Navigation/NavMap/C/Triggers"]
 script = ExtResource("7_itm1g")
-text = "Destination C"
+text = "Reached C"
+metadata/_custom_type_script = "uid://c85cudw6o5wbo"
 
-[node name="D" type="Area2D" parent="Navigation/NavMap"]
+[node name="D" type="Area2D" parent="Navigation/NavMap" node_paths=PackedStringArray("collision", "triggers")]
 position = Vector2(291, 200)
 script = ExtResource("6_axfb2")
 selectable = false
+collision = NodePath("Collision")
+triggers = NodePath("Triggers")
+metadata/_custom_type_script = "uid://b1muqje3faxmt"
 
 [node name="Collision" type="CollisionShape2D" parent="Navigation/NavMap/D"]
 shape = SubResource("CircleShape2D_xqrps")
@@ -172,14 +202,20 @@ debug_color = Color(0.701961, 0, 0, 0.419608)
 metadata/_edit_lock_ = true
 
 [node name="Triggers" type="Node" parent="Navigation/NavMap/D"]
+script = ExtResource("8_je848")
+metadata/_custom_type_script = "uid://cedp21hrhru6h"
 
 [node name="TextboxTrigger" type="Node" parent="Navigation/NavMap/D/Triggers"]
 script = ExtResource("7_itm1g")
-text = "Destination D"
+text = "Reached D"
+metadata/_custom_type_script = "uid://c85cudw6o5wbo"
 
-[node name="Combat" type="Area2D" parent="Navigation/NavMap"]
+[node name="Combat" type="Area2D" parent="Navigation/NavMap" node_paths=PackedStringArray("collision", "triggers")]
 position = Vector2(50, 328)
 script = ExtResource("6_axfb2")
+collision = NodePath("Collision")
+triggers = NodePath("Triggers")
+metadata/_custom_type_script = "uid://b1muqje3faxmt"
 
 [node name="Collision" type="CollisionShape2D" parent="Navigation/NavMap/Combat"]
 shape = SubResource("CircleShape2D_xqrps")
@@ -187,13 +223,17 @@ debug_color = Color(0, 0.6, 0.701961, 0.419608)
 metadata/_edit_lock_ = true
 
 [node name="Triggers" type="Node" parent="Navigation/NavMap/Combat"]
+script = ExtResource("8_je848")
+metadata/_custom_type_script = "uid://cedp21hrhru6h"
 
-[node name="Change Scene" type="Node" parent="Navigation/NavMap/Combat/Triggers"]
-script = ExtResource("8_gj1dp")
+[node name="ChangeSceneTrigger" type="Node" parent="Navigation/NavMap/Combat/Triggers"]
+script = ExtResource("10_ftxq5")
+metadata/_custom_type_script = "uid://bou1ppa6mrns7"
 
 [node name="NavPawn" type="Node2D" parent="Navigation"]
 position = Vector2(152, 141)
 script = ExtResource("8_81qr1")
+metadata/_custom_type_script = "uid://1i5h8epl1i1s"
 
 [node name="Sprite2D" type="Sprite2D" parent="Navigation/NavPawn"]
 scale = Vector2(1, 20)
@@ -557,6 +597,7 @@ shape = SubResource("CircleShape2D_ftxq5")
 script = ExtResource("18_f7p0w")
 color = Color(0.2275, 0.65, 0.33312503, 1)
 disabled_color = Color(0.66, 0.2244, 0.2244, 1)
+metadata/_custom_type_script = "uid://22vtdegk8hes"
 
 [node name="Circle Enable" type="Button" parent="Visible Collision Shape" node_paths=PackedStringArray("visible_collision_shape_2d")]
 anchors_preset = 8
@@ -585,6 +626,7 @@ script = ExtResource("18_f7p0w")
 color = Color(0.2275, 0.65, 0.33312503, 1)
 disabled_color = Color(0.66, 0.2244, 0.2244, 1)
 border = false
+metadata/_custom_type_script = "uid://22vtdegk8hes"
 
 [node name="Square Enable" type="Button" parent="Visible Collision Shape" node_paths=PackedStringArray("visible_collision_shape_2d")]
 anchors_preset = 8
@@ -605,3 +647,8 @@ visible_collision_shape_2d = NodePath("../Square/VisibleCollisionShape2D")
 
 [connection signal="button_held" from="Health/Health Bar Up" to="Health/Health Bar" method="change_value" binds= [1]]
 [connection signal="button_held" from="Health/Health Bar Down" to="Health/Health Bar" method="change_value" binds= [-1]]
+[connection signal="selected" from="Navigation/NavMap/A" to="Navigation/NavController" method="destination_selected"]
+[connection signal="selected" from="Navigation/NavMap/B" to="Navigation/NavController" method="destination_selected"]
+[connection signal="selected" from="Navigation/NavMap/C" to="Navigation/NavController" method="destination_selected"]
+[connection signal="selected" from="Navigation/NavMap/D" to="Navigation/NavController" method="destination_selected"]
+[connection signal="selected" from="Navigation/NavMap/Combat" to="Navigation/NavController" method="destination_selected"]
