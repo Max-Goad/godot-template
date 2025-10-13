@@ -5,15 +5,6 @@ class_name TextboxTrigger extends Trigger
 
 const textbox_scene = preload("res://resources/ui/textbox.tscn")
 
-@warning_ignore("shadowed_variable")
-static func new_node(text = "", timeout = 5.0) -> TextboxTrigger:
-	var tt = Node.new()
-	tt.set_script(Trigger.Basic.textbox)
-	var textbox_trigger = tt as TextboxTrigger
-	textbox_trigger.text = text
-	textbox_trigger.timeout = timeout
-	return textbox_trigger
-
 func execute():
 	var textbox: Textbox = textbox_scene.instantiate()
 	textbox.text = text

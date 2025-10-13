@@ -4,4 +4,3 @@ extends Trigger
 
 func execute():
 	print(string)
-
