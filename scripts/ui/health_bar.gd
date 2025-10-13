@@ -36,5 +36,3 @@ func _validate_color_steps():
 	for cs in self.color_steps:
 		assert(cs.max_value > current_max, "invalid color steps")
 		current_max = cs.max_value
-
-

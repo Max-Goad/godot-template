@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://7prqlslf7eh3" path="res://scripts/scenes/test_scene.gd" id="1_i0mht"]
 [ext_resource type="PackedScene" uid="uid://csh1iurc1b413" path="res://resources/ui/health_bar.tscn" id="2_g3ou2"]
 [ext_resource type="Script" uid="uid://dtkyery6j0e0c" path="res://scripts/ui/hold_button.gd" id="3_dpdlj"]
-[ext_resource type="Script" path="res://scripts/navigation/nav_map.gd" id="4_1ldar"]
+[ext_resource type="Script" uid="uid://cmrui5v5lwprx" path="res://scripts/navigation/nav_map.gd" id="4_1ldar"]
 [ext_resource type="Script" path="res://scripts/navigation/nav_connection.gd" id="5_rstiy"]
 [ext_resource type="Script" uid="uid://b1muqje3faxmt" path="res://scripts/navigation/nav_destination.gd" id="6_axfb2"]
 [ext_resource type="Script" uid="uid://c85cudw6o5wbo" path="res://scripts/trigger/textbox_trigger.gd" id="7_itm1g"]
@@ -11,7 +11,7 @@
 [ext_resource type="Script" path="res://scripts/trigger/triggers.gd" id="8_je848"]
 [ext_resource type="Script" uid="uid://bkprsow3a3mlf" path="res://scripts/misc/_test/test_dest_toggle_button.gd" id="9_qduwm"]
 [ext_resource type="Script" uid="uid://bou1ppa6mrns7" path="res://scripts/trigger/change_scene_trigger.gd" id="10_ftxq5"]
-[ext_resource type="Script" path="res://scripts/navigation/nav_controller.gd" id="11_f7p0w"]
+[ext_resource type="Script" uid="uid://b7ia4bhq41usw" path="res://scripts/navigation/nav_controller.gd" id="11_f7p0w"]
 [ext_resource type="Theme" uid="uid://q5rrux06ucou" path="res://theme/test.theme" id="11_pw38d"]
 [ext_resource type="Script" uid="uid://bydthy3o682u6" path="res://scripts/misc/_test/test_spawn_textbox.gd" id="12_c7u7o"]
 [ext_resource type="Script" uid="uid://1kmr1183njlk" path="res://scripts/misc/_test/test_save_load_button.gd" id="12_k2pe3"]
@@ -141,7 +141,6 @@ metadata/_edit_lock_ = true
 
 [node name="Triggers" type="Node" parent="Navigation/NavMap/A"]
 script = ExtResource("8_je848")
-metadata/_custom_type_script = "uid://cedp21hrhru6h"
 
 [node name="TextboxTrigger" type="Node" parent="Navigation/NavMap/A/Triggers"]
 script = ExtResource("7_itm1g")
@@ -161,7 +160,6 @@ metadata/_edit_lock_ = true
 
 [node name="Triggers" type="Node" parent="Navigation/NavMap/B"]
 script = ExtResource("8_je848")
-metadata/_custom_type_script = "uid://cedp21hrhru6h"
 
 [node name="TextboxTrigger" type="Node" parent="Navigation/NavMap/B/Triggers"]
 script = ExtResource("7_itm1g")
@@ -181,7 +179,6 @@ metadata/_edit_lock_ = true
 
 [node name="Triggers" type="Node" parent="Navigation/NavMap/C"]
 script = ExtResource("8_je848")
-metadata/_custom_type_script = "uid://cedp21hrhru6h"
 
 [node name="TextboxTrigger" type="Node" parent="Navigation/NavMap/C/Triggers"]
 script = ExtResource("7_itm1g")
@@ -203,7 +200,6 @@ metadata/_edit_lock_ = true
 
 [node name="Triggers" type="Node" parent="Navigation/NavMap/D"]
 script = ExtResource("8_je848")
-metadata/_custom_type_script = "uid://cedp21hrhru6h"
 
 [node name="TextboxTrigger" type="Node" parent="Navigation/NavMap/D/Triggers"]
 script = ExtResource("7_itm1g")
@@ -224,7 +220,6 @@ metadata/_edit_lock_ = true
 
 [node name="Triggers" type="Node" parent="Navigation/NavMap/Combat"]
 script = ExtResource("8_je848")
-metadata/_custom_type_script = "uid://cedp21hrhru6h"
 
 [node name="ChangeSceneTrigger" type="Node" parent="Navigation/NavMap/Combat/Triggers"]
 script = ExtResource("10_ftxq5")
@@ -233,7 +228,6 @@ metadata/_custom_type_script = "uid://bou1ppa6mrns7"
 [node name="NavPawn" type="Node2D" parent="Navigation"]
 position = Vector2(152, 141)
 script = ExtResource("8_81qr1")
-metadata/_custom_type_script = "uid://1i5h8epl1i1s"
 
 [node name="Sprite2D" type="Sprite2D" parent="Navigation/NavPawn"]
 scale = Vector2(1, 20)
@@ -597,7 +591,6 @@ shape = SubResource("CircleShape2D_ftxq5")
 script = ExtResource("18_f7p0w")
 color = Color(0.2275, 0.65, 0.33312503, 1)
 disabled_color = Color(0.66, 0.2244, 0.2244, 1)
-metadata/_custom_type_script = "uid://22vtdegk8hes"
 
 [node name="Circle Enable" type="Button" parent="Visible Collision Shape" node_paths=PackedStringArray("visible_collision_shape_2d")]
 anchors_preset = 8
@@ -626,7 +619,6 @@ script = ExtResource("18_f7p0w")
 color = Color(0.2275, 0.65, 0.33312503, 1)
 disabled_color = Color(0.66, 0.2244, 0.2244, 1)
 border = false
-metadata/_custom_type_script = "uid://22vtdegk8hes"
 
 [node name="Square Enable" type="Button" parent="Visible Collision Shape" node_paths=PackedStringArray("visible_collision_shape_2d")]
 anchors_preset = 8
