@@ -17,4 +17,3 @@ func _pressed() -> void:
 		di.color = self.color
 	di.position = self.position - Vector2(0, 50)
 	get_parent().add_child(di)
-

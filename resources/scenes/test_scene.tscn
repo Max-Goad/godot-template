@@ -1,22 +1,24 @@
-[gd_scene load_steps=31 format=3 uid="uid://xemaon1gbp2k"]
+[gd_scene load_steps=35 format=3 uid="uid://xemaon1gbp2k"]
 
-[ext_resource type="Script" path="res://scripts/scenes/test_scene.gd" id="1_i0mht"]
+[ext_resource type="Script" uid="uid://7prqlslf7eh3" path="res://scripts/scenes/test_scene.gd" id="1_i0mht"]
 [ext_resource type="PackedScene" uid="uid://csh1iurc1b413" path="res://resources/ui/health_bar.tscn" id="2_g3ou2"]
-[ext_resource type="Script" path="res://scripts/ui/hold_button.gd" id="3_dpdlj"]
-[ext_resource type="Script" path="res://scripts/navigation/nav_map.gd" id="4_1ldar"]
-[ext_resource type="Script" path="res://scripts/navigation/connection.gd" id="5_rstiy"]
-[ext_resource type="Script" path="res://scripts/navigation/destination.gd" id="6_axfb2"]
-[ext_resource type="Script" path="res://scripts/trigger/textbox_trigger.gd" id="7_itm1g"]
-[ext_resource type="Script" path="res://scripts/navigation/nav_pawn.gd" id="8_81qr1"]
-[ext_resource type="Script" path="res://scripts/trigger/change_scene_trigger.gd" id="8_gj1dp"]
-[ext_resource type="Script" path="res://scripts/misc/_test/test_dest_toggle_button.gd" id="9_qduwm"]
+[ext_resource type="Script" uid="uid://dtkyery6j0e0c" path="res://scripts/ui/hold_button.gd" id="3_dpdlj"]
+[ext_resource type="Script" uid="uid://cmrui5v5lwprx" path="res://scripts/navigation/nav_map.gd" id="4_1ldar"]
+[ext_resource type="Script" uid="uid://bcx3cuk7obsnv" path="res://scripts/navigation/connection.gd" id="5_rstiy"]
+[ext_resource type="Script" uid="uid://b1muqje3faxmt" path="res://scripts/navigation/destination.gd" id="6_axfb2"]
+[ext_resource type="Script" uid="uid://c85cudw6o5wbo" path="res://scripts/trigger/textbox_trigger.gd" id="7_itm1g"]
+[ext_resource type="Script" uid="uid://1i5h8epl1i1s" path="res://scripts/navigation/nav_pawn.gd" id="8_81qr1"]
+[ext_resource type="Script" uid="uid://bou1ppa6mrns7" path="res://scripts/trigger/change_scene_trigger.gd" id="8_gj1dp"]
+[ext_resource type="Script" uid="uid://bkprsow3a3mlf" path="res://scripts/misc/_test/test_dest_toggle_button.gd" id="9_qduwm"]
 [ext_resource type="Theme" uid="uid://q5rrux06ucou" path="res://theme/test.theme" id="11_pw38d"]
-[ext_resource type="Script" path="res://scripts/misc/_test/test_spawn_textbox.gd" id="12_c7u7o"]
-[ext_resource type="Script" path="res://scripts/misc/_test/test_save_load_button.gd" id="12_k2pe3"]
-[ext_resource type="Script" path="res://scripts/ui/multibutton.gd" id="13_n2e41"]
-[ext_resource type="Script" path="res://scripts/ui/multibutton_pair.gd" id="14_he6h3"]
-[ext_resource type="Script" path="res://scripts/misc/_test/test_multibutton_label.gd" id="15_tyds6"]
-[ext_resource type="Script" path="res://scripts/misc/_test/test_spawn_damage_indicator.gd" id="16_ujy37"]
+[ext_resource type="Script" uid="uid://bydthy3o682u6" path="res://scripts/misc/_test/test_spawn_textbox.gd" id="12_c7u7o"]
+[ext_resource type="Script" uid="uid://1kmr1183njlk" path="res://scripts/misc/_test/test_save_load_button.gd" id="12_k2pe3"]
+[ext_resource type="Script" uid="uid://ch1piyk1del1k" path="res://scripts/ui/multibutton.gd" id="13_n2e41"]
+[ext_resource type="Script" uid="uid://d02ri3ryw8poa" path="res://scripts/ui/multibutton_pair.gd" id="14_he6h3"]
+[ext_resource type="Script" uid="uid://bhpk8x6ovggua" path="res://scripts/misc/_test/test_multibutton_label.gd" id="15_tyds6"]
+[ext_resource type="Script" uid="uid://cyys85hikqdpi" path="res://scripts/misc/_test/test_spawn_damage_indicator.gd" id="16_ujy37"]
+[ext_resource type="Script" uid="uid://22vtdegk8hes" path="res://scripts/extensions/visible_collision_shape_2d.gd" id="18_f7p0w"]
+[ext_resource type="Script" uid="uid://th4l6u2tjopq" path="res://scripts/misc/_test/test_visible_collision_shape.gd" id="19_je848"]
 
 [sub_resource type="Resource" id="Resource_a2occ"]
 script = ExtResource("5_rstiy")
@@ -40,19 +42,16 @@ bidirectional = false
 script = ExtResource("5_rstiy")
 a = NodePath("C")
 b = NodePath("D")
-bidirectional = true
 
 [sub_resource type="Resource" id="Resource_bwq7t"]
 script = ExtResource("5_rstiy")
 a = NodePath("D")
 b = NodePath("B")
-bidirectional = true
 
 [sub_resource type="Resource" id="Resource_tbbxx"]
 script = ExtResource("5_rstiy")
 a = NodePath("C")
 b = NodePath("Combat")
-bidirectional = true
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_xqrps"]
 radius = 25.0
@@ -79,6 +78,12 @@ button = NodePath("VBoxContainer/HBoxContainer/Cancel")
 script = ExtResource("14_he6h3")
 type = 105
 button = NodePath("VBoxContainer/HBoxContainer/Choice 5")
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ftxq5"]
+radius = 47.010635
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_f7p0w"]
+size = Vector2(116, 62)
 
 [node name="Test Scene" type="Node2D"]
 script = ExtResource("1_i0mht")
@@ -541,6 +546,62 @@ Damage"
 clip_text = true
 script = ExtResource("16_ujy37")
 random = true
+
+[node name="Visible Collision Shape" type="Node" parent="."]
+
+[node name="Circle" type="Area2D" parent="Visible Collision Shape"]
+
+[node name="VisibleCollisionShape2D" type="CollisionShape2D" parent="Visible Collision Shape/Circle"]
+position = Vector2(554, 382)
+shape = SubResource("CircleShape2D_ftxq5")
+script = ExtResource("18_f7p0w")
+color = Color(0.2275, 0.65, 0.33312503, 1)
+disabled_color = Color(0.66, 0.2244, 0.2244, 1)
+
+[node name="Circle Enable" type="Button" parent="Visible Collision Shape" node_paths=PackedStringArray("visible_collision_shape_2d")]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -148.0
+offset_top = 78.0
+offset_right = -16.0
+offset_bottom = 109.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Enable / Disable
+"
+script = ExtResource("19_je848")
+visible_collision_shape_2d = NodePath("../Circle/VisibleCollisionShape2D")
+
+[node name="Square" type="Area2D" parent="Visible Collision Shape"]
+position = Vector2(137, 0)
+
+[node name="VisibleCollisionShape2D" type="CollisionShape2D" parent="Visible Collision Shape/Square"]
+position = Vector2(554, 382)
+shape = SubResource("RectangleShape2D_f7p0w")
+script = ExtResource("18_f7p0w")
+color = Color(0.2275, 0.65, 0.33312503, 1)
+disabled_color = Color(0.66, 0.2244, 0.2244, 1)
+border = false
+
+[node name="Square Enable" type="Button" parent="Visible Collision Shape" node_paths=PackedStringArray("visible_collision_shape_2d")]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -11.0
+offset_top = 78.0
+offset_right = 121.0
+offset_bottom = 109.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Enable / Disable
+"
+script = ExtResource("19_je848")
+visible_collision_shape_2d = NodePath("../Square/VisibleCollisionShape2D")
 
 [connection signal="button_held" from="Health/Health Bar Up" to="Health/Health Bar" method="change_value" binds= [1]]
 [connection signal="button_held" from="Health/Health Bar Down" to="Health/Health Bar" method="change_value" binds= [-1]]
