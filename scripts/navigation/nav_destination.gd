@@ -4,8 +4,10 @@ class_name NavDestination extends Area2D
 
 #region Variables
 @export var selectable: bool = true: set = _set_selectable
-@export var collision: CollisionShape2D
+@export var collision: VisibleCollisionShape2D
 @export var triggers: Triggers
+
+var index: int = -1
 
 signal selected(dest)
 

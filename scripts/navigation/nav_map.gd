@@ -20,6 +20,7 @@ func _ready() -> void:
 	if Engine.is_editor_hint():
 		return
 	destinations = _populate_destinations_from_connections()
+	_assign_index_to_destinations()
 	astar = _generate_astar()
 
 func _draw() -> void:
@@ -86,6 +87,10 @@ func _populate_destinations_from_connections() -> Array[NavDestination]:
 		if b not in out:
 			out.push_back(b)
 	return out
+
+func _assign_index_to_destinations():
+	for i in destinations.size():
+		destinations[i].index = i
 
 func _generate_astar() -> AStar2D:
 	var out := AStar2D.new()
