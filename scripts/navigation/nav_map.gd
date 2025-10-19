@@ -182,9 +182,15 @@ func _draw_connections():
 		var bnode = get_node(connection.b)
 		var a: Vector2 = anode.position
 		var b: Vector2 = bnode.position
-		if (connection.bidirectional):
+		if connection.bidirectional:
 			draw_line(a, b, connection_color, connection_width)
 		else:
-			var h: Vector2 = (a+b)/2
-			draw_line(a, h, connection_color, connection_width)
-			draw_line(h, b, connection_disabled_color, connection_width)
+			var h := a.lerp(b, 0.5)
+			var ah := h.lerp(b, 0.025 * connection_width)
+			var at := h.lerp(a, 0.025 * connection_width)
+			draw_line(a, ah, connection_color, connection_width)
+			draw_line(ah, b, connection_disabled_color, connection_width)
+			draw_line(ah, (at-ah).rotated(PI/4.0)+ah, connection_color, connection_width)
+			draw_line(ah, (at-ah).rotated(-PI/4.0)+ah, connection_color, connection_width)
+			# Draw the rest of the arrowhead in
+			draw_line(ah, (at-ah).rotated(3.0*PI/4.0)/7.5+ah, connection_color, connection_width)
