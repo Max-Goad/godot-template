@@ -7,7 +7,7 @@
 [ext_resource type="Script" path="res://scripts/navigation/nav_connection.gd" id="5_rstiy"]
 [ext_resource type="Script" uid="uid://b1muqje3faxmt" path="res://scripts/navigation/nav_destination.gd" id="6_axfb2"]
 [ext_resource type="Script" uid="uid://c85cudw6o5wbo" path="res://scripts/trigger/textbox_trigger.gd" id="7_itm1g"]
-[ext_resource type="Script" path="res://scripts/navigation/nav_pawn.gd" id="8_81qr1"]
+[ext_resource type="Script" uid="uid://1i5h8epl1i1s" path="res://scripts/navigation/nav_pawn.gd" id="8_81qr1"]
 [ext_resource type="Script" path="res://scripts/trigger/triggers.gd" id="8_je848"]
 [ext_resource type="Script" uid="uid://bkprsow3a3mlf" path="res://scripts/misc/_test/test_dest_toggle_button.gd" id="9_qduwm"]
 [ext_resource type="Script" uid="uid://bou1ppa6mrns7" path="res://scripts/trigger/change_scene_trigger.gd" id="10_ftxq5"]
@@ -58,10 +58,10 @@ b = NodePath("Combat")
 [sub_resource type="CircleShape2D" id="CircleShape2D_xqrps"]
 radius = 25.0
 
-[sub_resource type="Gradient" id="Gradient_eg0cy"]
+[sub_resource type="Gradient" id="Gradient_ftxq5"]
 
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_v3qjp"]
-gradient = SubResource("Gradient_eg0cy")
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_2u7qp"]
+gradient = SubResource("Gradient_ftxq5")
 width = 20
 
 [sub_resource type="Curve2D" id="Curve2D_7lvpt"]
@@ -225,14 +225,12 @@ script = ExtResource("8_je848")
 script = ExtResource("10_ftxq5")
 metadata/_custom_type_script = "uid://bou1ppa6mrns7"
 
-[node name="NavPawn" type="Node2D" parent="Navigation"]
+[node name="NavPawn" type="Sprite2D" parent="Navigation"]
 position = Vector2(152, 141)
-script = ExtResource("8_81qr1")
-
-[node name="Sprite2D" type="Sprite2D" parent="Navigation/NavPawn"]
 scale = Vector2(1, 20)
-texture = SubResource("GradientTexture1D_v3qjp")
-metadata/_edit_lock_ = true
+texture = SubResource("GradientTexture1D_2u7qp")
+script = ExtResource("8_81qr1")
+metadata/_custom_type_script = "uid://1i5h8epl1i1s"
 
 [node name="Path" type="Path2D" parent="Navigation/NavPawn"]
 curve = SubResource("Curve2D_7lvpt")

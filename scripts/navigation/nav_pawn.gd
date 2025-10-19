@@ -1,6 +1,6 @@
 # Note: Replace UID when copying from template
 @icon("uid://caotv31fjq3l3")
-class_name NavPawn extends Node2D
+class_name NavPawn extends Sprite2D
 
 #region Variables
 @export_range(0.5, 4.0) var move_speed : float = 1.0
@@ -32,6 +32,9 @@ func _process(delta):
 #endregion
 
 #region Public Functions
+func at_destination(d: NavDestination) -> bool:
+	return not moving and self.position == d.position
+
 func initiate_move(p: Array[NavDestination]):
 	# If we have no path it means the destination is unreachable.
 	# Do nothing.
@@ -49,6 +52,10 @@ func initiate_move(p: Array[NavDestination]):
 	follow.progress = 0
 	destination = p.back()
 	moving = true
+
+func move_instantly(d: NavDestination):
+	initiate_move([d])
+	self.position = destination.position
 #endregion
 
 #region Private Functions
