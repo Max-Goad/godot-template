@@ -14,7 +14,7 @@ var astar: AStar2D
 @export var draw_connections := DisplayMode.EditorOnly : set = _set_draw_connections
 @export var connection_color := Color.WHITE : set = _set_connection_color
 @export var connection_disabled_color := Color.LIGHT_CORAL : set = _set_connection_disabled_color
-@export var connection_width := 5.0 : set = _set_connection_width
+@export_range(0.0, 10.0, 0.1) var connection_width := 5.0 : set = _set_connection_width
 
 func _ready() -> void:
 	if Engine.is_editor_hint():
@@ -31,16 +31,12 @@ func _draw() -> void:
 			if Engine.is_editor_hint():
 				_draw_connections()
 
-# Note: Returns [] if we're already at the destination
+# Note: Returns [dest] if we're already at the destination
 #		Returns null if there's no path to the destination
 func generate_path(from: Vector2, to: NavDestination) -> Array[NavDestination]:
 	var dest = _point_is_on_destination(from)
 	if dest:
-		if dest == to:
-			return [dest]
-		else:
-			var indexes = astar.get_id_path(dest_to_index[dest], dest_to_index[to])
-			return _indexes_to_destinations(indexes)
+		return generate_path_between(dest, to)
 
 	var conn = _point_is_on_connection(from)
 	if conn:
@@ -55,11 +51,35 @@ func generate_path(from: Vector2, to: NavDestination) -> Array[NavDestination]:
 		var indexes = astar.get_id_path(dest_to_index[closest_to(from)], dest_to_index[to])
 		return _indexes_to_destinations(indexes)
 
+func generate_path_between(from: NavDestination, to: NavDestination):
+	if from == to:
+		return [from]
+	else:
+		var indexes = astar.get_id_path(dest_to_index[from], dest_to_index[to])
+		return _indexes_to_destinations(indexes)
+
+func distance(a: NavDestination, b: NavDestination):
+	var path = generate_path_between(a, b)
+	# Path includes "a", so we must subtract 1
+	return path.size() - 1
+
+func destinations_at_distance(from: NavDestination, target_distance: int) -> Array[NavDestination]:
+	var candidates: Array[NavDestination] = []
+	for dest in destinations:
+		if dest == from:
+			continue
+		if distance(from, dest) == target_distance:
+			candidates.push_back(dest)
+	return candidates
+
 func closest_to(pos: Vector2) -> NavDestination:
 	return destinations[astar.get_closest_point(pos)]
 
 func random() -> NavDestination:
 	return destinations.pick_random()
+
+func random_index() -> int:
+	return get_index_from_dest(random())
 
 func get_index_from_dest(dest: NavDestination) -> int:
 	return dest_to_index[dest]
